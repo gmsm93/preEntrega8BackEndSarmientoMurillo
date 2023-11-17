@@ -1,0 +1,15 @@
+{{#extends 'layouts/main'}}
+{{#content 'body'}}
+  <h1>Bienvenido, {{ user.email }}</h1>
+    <div>
+        {{#each products }}
+            <div>
+                <a href="/product/{{this.name}}">
+                    <b>{{this.name}}</b>
+                    <img src="{{this.photo}}" height="50">
+                    <i>{{this.type}}</i>
+                </a>
+            </div>
+        {{/each}}
+    </div>
+{{/content}}

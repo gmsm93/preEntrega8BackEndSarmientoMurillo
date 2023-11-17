@@ -1,0 +1,26 @@
+<div>
+    <h1>Bienvenido, {{ user.email }}</h1>
+    <h2>{{product.title}}</h2>
+    <h3>{{product.description}}</h3>
+
+    category: {{product.category}}
+    price: {{product.price}}
+    stock: {{product.stock}}
+    <hr>
+
+    <button class="btn btn-danger" id="delete">Borrar</button>
+</div>
+
+<script>
+    document.querySelector('#delete').onclick  = (e) => {
+        const id = "{{ product._id }}"
+        fetch(`/product/${id}`, {method='DELETE'})
+            .then( ()=> {
+                alert('Eliminado con Exito')
+                document.location.href = '/product'
+            })
+            .catch( e => {
+                alert('No se pudo eliminar')
+            })
+    }
+</script>
