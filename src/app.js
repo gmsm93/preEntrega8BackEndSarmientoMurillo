@@ -1,11 +1,12 @@
 import express from "express"
 import prdRouter from './router/prd.router.js'
 import handlebars from 'express-handlebars'
+import passport from 'passport'
 import mongoose from "mongoose"
 import __dirname from "./utils.js"
 import session from "express-session"
 import MongoStore from "connect-mongo"
-import bodyParser from "body-parser"
+import initializePassport from './config/passport.config.js'
 import viewsRouter from './router/views.router.js'
 import sessionRouter from './router/session.router.js'
 
@@ -13,6 +14,26 @@ import sessionRouter from './router/session.router.js'
 const app=express()
 const mongoURL = "mongodb+srv://r2:L53I9bfZi00L9BkV@clusterr2.028npj6.mongodb.net/?retryWrites=true&w=majority"
 const mongoDBName = 'ClusterR2'
+
+// Configuracion de la sesion
+app.use(session({
+  store: MongoStore.create({
+      mongoUrl: mongoURL,
+      dbName: mongoDB,
+      mongoOptions: {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      },
+      ttl: 15
+  }),
+  secret: 'secret',
+  resave: true,
+  saveUninitialized: true
+}))
+
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
 
 // configurar el motor de plantillas
 app.engine('handlebars', handlebars.engine())
@@ -29,18 +50,6 @@ app.use(express.static(__dirname + '/public'))
 // configuracion de rutas
 app.get('/health', (req, res) => res.send('ok'))
 app.use('/product', prdRouter)
-
-// Configuracion de la sesion
-app.use(session({
-  store: MongoStore.create({
-      mongoUrl,
-      dbName: mongoDB,
-      ttl: 100
-  }),
-  secret: 'secret',
-  resave: true,
-  saveUninitialized: true
-}))
 
 app.use('/', viewsRouter)
 app.use('/api/session', sessionRouter)
