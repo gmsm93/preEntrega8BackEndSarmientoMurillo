@@ -35,11 +35,10 @@ router.post('/login', async (req, res) => {
   try {
       const user = await UserModel.findOne({ email });
       if (!user) {
-      return res.status(401).send('Credenciales incorrectas');
+      return res.status(401).send('Usuario no encontrado');
       }
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-      return res.status(401).send('Credenciales incorrectas');
+      if (!isValidPassword(user,password)) {
+      return res.status(403).send('Contraseña incorrecta');
       }
       req.session.user = user;
       res.redirect('/');
