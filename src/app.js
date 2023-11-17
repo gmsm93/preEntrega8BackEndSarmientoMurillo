@@ -19,7 +19,7 @@ const mongoDBName = 'ClusterR2'
 app.use(session({
   store: MongoStore.create({
       mongoUrl: mongoURL,
-      dbName: mongoDB,
+      dbName: mongoDBName,
       mongoOptions: {
         useNewUrlParser: true,
         useUnifiedTopology: true

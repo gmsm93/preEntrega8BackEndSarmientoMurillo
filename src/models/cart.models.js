@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
+import mongoosePaginate from 'mongoose-paginate-v2'
 
-const mongoosePaginate = require('mongoose-paginate-v2')
+//const mongoosePaginate = mongoosePaginate
 const cartCollection = 'carts'
 
 const cartSchema = new mongoose.Schema({

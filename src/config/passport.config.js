@@ -1,6 +1,6 @@
 import passport from "passport";
 import GitHubStrategy from 'passport-github2'
-import { UserModel } from "../models/users.model.js";
+import UserModel from "../models/user.model.js";
 
 const initializePassport = () => {
 
