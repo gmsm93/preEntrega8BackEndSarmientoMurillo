@@ -1,4 +1,6 @@
 import passport from "passport";
+import { Strategy as LocalStrategy } from 'passport-local';
+import { Strategy as JWTStrategy, ExtractJwt } from 'passport-jwt';
 import GitHubStrategy from 'passport-github2'
 import UserModel from "../models/user.model.js";
 
@@ -36,6 +38,52 @@ const initializePassport = () => {
     ))
 
 
+    // Estrategia Local para el inicio de sesión
+    passport.use('local-login', new LocalStrategy({
+        usernameField: 'email',
+        passwordField: 'password',
+        passReqToCallback: true
+    },
+        async (req, email, password, done) => {
+        try {
+            const user = await UserModel.findOne({ email });
+
+            if (!user || !user.validPassword(password)) {
+            return done(null, false, { message: 'Usuario o contraseña incorrectos' });
+            }
+
+            return done(null, {
+                _id: user._id,
+                email: user.email,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                role: user.role
+            });
+        } catch (error) {
+            return done(error);
+        }
+        }
+    ));
+
+    // Estrategia JWT para la autenticación
+    passport.use('jwt', new JWTStrategy({
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+        secretOrKey: process.env.JWT_SECRET || '12345678'
+    },
+        async (payload, done) => {
+        try {
+            const user = await UserModel.findById(payload.sub);
+
+            if (!user) {
+            return done(null, false, { message: 'Usuario no encontrado' });
+            }
+
+            return done(null, user);
+        } catch (error) {
+            return done(error);
+        }
+        }
+    ));
 
     passport.serializeUser((user, done) => {
         done(null, user._id)
